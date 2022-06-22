@@ -2,8 +2,8 @@ $(document).ready(function () {
     // Metodo de obtención de parámetros
     const urlParams = new URLSearchParams(window.location.search);
     const idRegion = urlParams.get('region');
-    let locacion = "";
-    let listaLocacion = [];
+
+    let locaciones = [];
     var elemPorPag = 10;
     var pagActual = 1;
 
@@ -11,32 +11,33 @@ $(document).ready(function () {
         type: "GET",
         url: "https://pokeapi.co/api/v2/region/" + idRegion,
         success: function (response) {
-
             var totalElem = response.locations.length;
             var totalPag = Math.ceil(totalElem / elemPorPag);
 
-            $.each(response.locations, function (key, value) {
-                var item = key + 1
-                if (1 <= item && item <= 10) {
-                    listaLocacion.push(value);
-                }
-            });
-
-            $.each(listaLocacion, function (key, value) {
-                locacion = locacion + genLocacion(key + 1, value.name, value.url);
-            });
-            $('#tablaLocaciones').html(locacion);
+            // region
             $('#labelRegion').html('Región ' + response.name);
 
+            // lista de locaciones
+            $.each(response.locations, function (key, value) {
+                locaciones.push(value)
+            });
+
+            // inicializamos
+            verPag(pagActual, totalPag)
             $("#paginador").html(genPaginador(pagActual, totalPag))
 
-            $(".pag").on("click", "button",function () {
-                var p = $(this).val()
-                console.log("holi")
-                console.log(p)
-                verPag(p)
+            // acciones
+            $(".pag").on("click", "button", function () {
+                verPag($(this).val(), totalPag)
             })
-
+            $("#next").on("click", "button", function () {
+                var next = Number(pagActual) + 1
+                verPag(next, totalPag)
+            })
+            $("#previous").on("click", "button", function () {
+                var previous = Number(pagActual) - 1
+                verPag(previous, totalPag)
+            })
         },
         error: function (ex) {
             console.log(ex);
@@ -52,12 +53,15 @@ $(document).ready(function () {
     }
 
     function genPaginador(pagActual, totalPag) {
+        // pagina anterior
         var disableP = pagActual <= 1 ? 'disabled' : ''
-        var previous = '<li class="page-item ' + disableP + ' "><span class="page-link">Previous</span></li>\n'
+        var previous = '<li id="previous" class="page-item ' + disableP + ' "><button class="page-link">Previous</button></li>\n'
 
+        // pagina siguiente
         var disableN = pagActual >= totalPag ? 'disabled' : ''
-        var next = '<li class="page-item ' + disableN + ' "><a class="page-link" href="#">Next</a></li>'
+        var next = '<li id="next" class="page-item ' + disableN + ' "><button class="page-link">Next</button></li>'
 
+        // locaciones
         var html = ''
         for (let p = 1; p <= totalPag; p++) {
             html = html + '<li class="pag page-item  ' + (p === pagActual ? 'active' : '') + ' " id="pag' + p + '">\n' +
@@ -66,34 +70,30 @@ $(document).ready(function () {
         return previous + html + next
     }
 
-    function verPag(p) {$.ajax({
-            type: "GET",
-            url: "https://pokeapi.co/api/v2/region/" + idRegion,
-            success: function (response) {
-                var totalElem = response.locations.length;
-                var totalPag = Math.ceil(totalElem / elemPorPag);
+    function verPag(p, totalPag) {
+        console.log(p)
+        // removemos estilos
+        $("#pag" + pagActual).removeClass("active")
+        // actualizamos pagina
+        pagActual = (p>totalPag || p < 1)? 1 : p
+        console.log(pagActual)
+        // agregamos estilos
+        $("#pag" + pagActual).addClass("active")
 
-                $.each(response.locations, function (key, value) {
-                    var item = key + 1
-                    if ((p - 1) * 10 + 1 <= item && item <= 10*p) {
-                        listaLocacion.push(value);
-                    }
-                });
+        // estilos de previous y next
+        $("#previous").addClass(pagActual <= 1 ? 'disabled' : '')
+        $("#previous").removeClass(pagActual > 1 ? 'disabled' : '')
+        $("#next").addClass(pagActual >= totalPag ? 'disabled' : '')
+        $("#next").removeClass(pagActual < totalPag ? 'disabled' : '')
 
-                $.each(listaLocacion, function (key, value) {
-                    locacion = locacion + genLocacion(key + 1, value.name, value.url);
-                });
-                $('#tablaLocaciones').html(locacion);
-                $('#labelRegion').html('Región ' + response.name);
-
-                $("#paginador").html(genPaginador(pagActual, totalPag))
-            },
-            error: function (ex) {
-                console.log(ex);
+        // locaciones
+        let locacionHtml = "";
+        $.each(locaciones, function (key, value) {
+            var item = key + 1
+            if ((pagActual - 1) * 10 + 1 <= item && item <= 10 * pagActual) {
+                locacionHtml = locacionHtml + genLocacion(item, value.name, value.url);
             }
         });
-
+        $('#tablaLocaciones').html(locacionHtml);
     }
-
-
 });
