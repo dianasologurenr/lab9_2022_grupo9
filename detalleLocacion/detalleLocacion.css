@@ -1,0 +1,29 @@
+body {
+    background-color: #ffffff;
+}
+button{
+    background-color:#2673ba !important;
+}
+.div-body {
+    margin: 10px 0px 0px 10px;
+}
+.h2-titulo {
+    display: inline-block;
+    margin: 0px 20px 0px 0px !important;
+    vertical-align: middle;
+    color: #353541;
+    font-size: 35px;
+}
+.div-bandera {
+    display: inline-block;
+}
+.mediaPokemon{
+    border: solid #16275d;
+    margin: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-grid;
+    text-align: center;
+    min-width: 120px;
+    min-height: 100px;
+}

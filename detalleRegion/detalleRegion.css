@@ -1,0 +1,22 @@
+body {
+    background-color: #ffffff;
+}
+/* button{
+    background-color:#2673ba !important;
+} */
+.botonDetalle{
+    background-color:#2673ba;
+} 
+.div-body {
+    margin: 10px 0px 0px 10px;
+}
+.h2-titulo {
+    display: inline-block;
+    margin: 0px 20px 0px 0px !important;
+    vertical-align: middle;
+    color: #353541;
+    font-size: 35px;
+}
+.div-bandera {
+    display: inline-block;
+}
