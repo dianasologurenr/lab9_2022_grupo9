@@ -12,6 +12,7 @@ $(document).ready(function () {
                 locacion = locacion + genLocacion(key+1, value.name, value.url);
             });
             $('#tablaLocaciones').html(locacion);
+            $('#labelRegion').html('Región '+response.name);
         },
         error: function (ex) {
             console.log(ex);
